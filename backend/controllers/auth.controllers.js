@@ -11,7 +11,6 @@ export const signup = async (req, res) => {
         }
 
         const { fullname, username, email, password, confirmpassword, gender } = parsedData.data;
-        console.log(req.body);
 
         if (password !== confirmpassword) {
             return res.status(400).json({ error: "Password didn't match" });
