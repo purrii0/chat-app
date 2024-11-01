@@ -19,8 +19,6 @@ const useLogin = () => {
                 body: JSON.stringify({ username, password })
             });
 
-            console.log(res);
-
 
             const data = await res.json();
             if (data.error) {
@@ -28,7 +26,7 @@ const useLogin = () => {
             }
 
             localStorage.setItem("user", JSON.stringify(data.user));
-            localStorage.setItem("token", JSON.stringify(data.token));
+            localStorage.setItem("token", data.token);
             setAuthUser(data);
 
         } catch (error) {

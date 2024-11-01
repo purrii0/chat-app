@@ -7,7 +7,6 @@ const useSignup = () => {
     const { setAuthUser } = useAuthContext();
 
     const signUp = async ({ fullname, username, email, password, confirmPassword, gender }) => {
-        console.log({ fullname, username, email, password, confirmPassword, gender })
         const success = handleInputErr({ fullname, username, email, password, confirmPassword, gender })
         if (!success) return;
 
@@ -23,7 +22,7 @@ const useSignup = () => {
                 throw new Error(data.error)
             }
             localStorage.setItem("user", JSON.stringify(data.user))
-            localStorage.setItem("token", JSON.stringify(data.token))
+            localStorage.setItem("token", data.token)
             setAuthUser(data)
         } catch (error) {
             toast.error(error.message)

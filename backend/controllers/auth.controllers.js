@@ -6,7 +6,6 @@ import { loginSchema, registrationSchema } from "../zod/validationschema.js";
 export const signup = async (req, res) => {
     try {
         const parsedData = registrationSchema.safeParse(req.body);
-        console.log(req.body)
         if (!parsedData.success) {
             return res.status(400).json({ error: "Invalid Input data" });
         }

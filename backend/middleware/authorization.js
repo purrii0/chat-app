@@ -4,16 +4,10 @@ import User from "../models/user.model.js";
 const authorizationRoute = async (req, res, next) => {
     try {
         const token = (req.headers.authorization && req.headers.authorization.split(' ')[1]) || res.cookie.jwt;
-        console.log(`token: ${token}`);
-        console.log(`secret: ${process.env.jwt_secret}`);
-
         if (!token) {
             return res.status(401).json({ error: "Unauthorized: No token provided" });
         }
-
         const decoded = jwt.verify(token, process.env.jwt_secret);
-        console.log(`decoded: ${decoded}`);
-
         const user = await User.findById(decoded.userId).select("-password");
 
         if (!user) {

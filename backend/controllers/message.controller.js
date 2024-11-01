@@ -6,7 +6,6 @@ export const sendMessage = async (req, res) => {
         const { id: recieverId } = req.params;
         const { message } = req.body;
         const senderId = req.user._id;
-
         let conversations = await Conversation.findOne({
             participants: { $all: [senderId, recieverId] }
         })
@@ -44,8 +43,9 @@ export const getMessage = async (req, res) => {
         }).populate("messages")
 
         if (!conversations) return res.status(200).json([])
+        const messages = conversations.messages;
+        res.status(200).json(messages)
 
-        res.status(200).json(conversations.messages)
     } catch (error) {
         console.log("Error in get Message route", error.message)
         return res.status(500).json({ error: "Error in Message controller route" })
