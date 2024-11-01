@@ -15,17 +15,22 @@ const useLogin = () => {
             const res = await fetch("http://localhost:8080/api/auth/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
+                credentials: "include",
                 body: JSON.stringify({ username, password })
             });
+
+            console.log(res);
+
 
             const data = await res.json();
             if (data.error) {
                 throw new Error(data.error);
             }
 
-            console.log(data);
-            localStorage.setItem("user", JSON.stringify(data));
+            localStorage.setItem("user", JSON.stringify(data.user));
+            localStorage.setItem("token", JSON.stringify(data.token));
             setAuthUser(data);
+
         } catch (error) {
             toast.error(error.message);
         } finally {

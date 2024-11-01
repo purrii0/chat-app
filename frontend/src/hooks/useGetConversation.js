@@ -1,30 +1,45 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
-const useGetConversation = () => {
+const useGetConversations = () => {
     const [loadingState, setLoadingState] = useState(false);
-    const [conversation, setConversation] = useState([])
+    const [conversations, setConversations] = useState([]);
+    const [error, setError] = useState(null); // Optional error state
 
     useEffect(() => {
-        const getConversation = async () => {
-            setLoadingState(true)
+        const getConversations = async () => {
+            setLoadingState(true);
+            setError(null); // Reset error state on new request
             try {
-                const res = await fetch('http://localhost:8080/api/users/')
-                const data = await res.json();
-                if (data.error) {
-                    throw new Error(data.error)
+                const token = localStorage.getItem("token");
+                const res = await fetch("http://localhost:8080/api/users", {
+                    method: "GET",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!res.ok) {
+                    // Handle non-200 responses
+                    const errorData = await res.json();
+                    throw new Error(errorData.error || 'Failed to fetch conversations');
                 }
-                setConversation(data)
+
+                const data = await res.json();
+                setConversations(data);
             } catch (error) {
-                toast.error(error.message)
+                setError(error.message); // Set error state
+                toast.error(error.message);
             } finally {
-                setLoadingState(false)
+                setLoadingState(false);
             }
-        }
-        // getConversation();
-    }, [])
-    return { loadingState, conversation }
-}
+        };
 
-export default useGetConversation;
+        getConversations();
+    }, []);
 
+    return { loadingState, conversations, error }; // Return error state
+};
+
+export default useGetConversations;

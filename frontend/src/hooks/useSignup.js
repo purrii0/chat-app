@@ -22,7 +22,8 @@ const useSignup = () => {
             if (data.error) {
                 throw new Error(data.error)
             }
-            localStorage.setItem("user", JSON.stringify(data))
+            localStorage.setItem("user", JSON.stringify(data.user))
+            localStorage.setItem("token", JSON.stringify(data.token))
             setAuthUser(data)
         } catch (error) {
             toast.error(error.message)

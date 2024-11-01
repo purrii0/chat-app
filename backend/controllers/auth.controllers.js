@@ -6,13 +6,13 @@ import { loginSchema, registrationSchema } from "../zod/validationschema.js";
 export const signup = async (req, res) => {
     try {
         const parsedData = registrationSchema.safeParse(req.body);
+        console.log(req.body)
         if (!parsedData.success) {
             return res.status(400).json({ error: "Invalid Input data" });
         }
 
-        const { fullname, username, email, password, confirmpassword, gender } = parsedData.data;
-
-        if (password !== confirmpassword) {
+        const { fullname, username, email, password, confirmPassword, gender } = parsedData.data;
+        if (password !== confirmPassword) {
             return res.status(400).json({ error: "Password didn't match" });
         }
 
@@ -41,12 +41,16 @@ export const signup = async (req, res) => {
         });
 
         if (newUser) {
-            generateTokenandSetcookie(newUser._id, res);
+            await generateTokenandSetcookie(newUser._id, res);
+            const token = await generateTokenandSetcookie(newUser._id, res);
             return res.status(201).json({
-                id: newUser._id,
-                fullname: newUser.fullname,
-                username: newUser.username,
-                profilePic: newUser.profilePicture
+                token,
+                user: {
+                    id: newUser._id,
+                    fullname: newUser.fullname,
+                    username: newUser.username,
+                    profilePic: newUser.profilePicture,
+                }
             });
         } else {
             return res.status(400).json({ error: "Invalid User Data" });
@@ -69,12 +73,16 @@ export const login = async (req, res) => {
         if (user) {
             const isValidPassword = await bcrypt.compare(password, user.password);
             if (isValidPassword) {
-                generateTokenandSetcookie(user._id, res);
+                await generateTokenandSetcookie(user._id, res);
+                const token = await generateTokenandSetcookie(user._id, res);
                 return res.status(200).json({
-                    id: user._id,
-                    fullname: user.fullname,
-                    username: user.username,
-                    profilePic: user.profilePicture
+                    token,
+                    user: {
+                        id: user._id,
+                        fullname: user.fullname,
+                        username: user.username,
+                        profilePic: user.profilePicture,
+                    }
                 });
             } else {
                 return res.status(400).json({ error: "Incorrect Password" });
