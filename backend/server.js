@@ -15,11 +15,11 @@ import connectToDB from "./db/connectingtodb.js";
 import authRotues from "./routes/auth.routes.js"
 import messageRoutes from "./routes/message.routes.js"
 import userRoutes from "./routes/user.routes.js";
+import { app, server } from "./socket/socket.js";
 
 dotenv.config();
 
 const port = process.env.PORT || 3000;
-const app = express();
 
 app.use(cors(corsOptions));
 app.use(express.json());
@@ -29,7 +29,7 @@ app.use("/api/auth", authRotues);
 app.use("/api/messages", messageRoutes);
 app.use("/api/users", userRoutes);
 
-app.listen(port, () => {
+server.listen(port, () => {
     connectToDB();
     console.log(`Listening to the port: ${port}`)
 })

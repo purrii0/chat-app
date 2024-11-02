@@ -5,7 +5,13 @@ import toast from "react-hot-toast";
 const useSendMessage = () => {
     const [loadingState, setLoadingState] = useState(false);
     const { messages, setMessages, selectedConversation } = useConversation();
+
     const sendMessage = async (message) => {
+        const trimmedMessage = message.trim();
+        if (!trimmedMessage) {
+            toast.error("Message cannot be empty");
+            return;
+        }
         setLoadingState(true)
         const token = localStorage.getItem("token")
         try {
@@ -22,7 +28,6 @@ const useSendMessage = () => {
             if (data.error) {
                 throw new Error(data.error)
             }
-
             setMessages([...messages, data.message])
 
         } catch (error) {
